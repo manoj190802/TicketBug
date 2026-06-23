@@ -113,7 +113,9 @@ namespace TicketBug.Backend.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadAndAnalyze(IFormFile file, [FromForm] string title, [FromForm] string description)
+        [RequestSizeLimit(104857600)] // 100 MB
+        [RequestFormLimits(MultipartBodyLengthLimit = 104857600, ValueLengthLimit = 104857600)]
+        public async Task<IActionResult> UploadAndAnalyze(IFormFile file, [FromForm] string? title, [FromForm] string? description)
         {
             try
             {

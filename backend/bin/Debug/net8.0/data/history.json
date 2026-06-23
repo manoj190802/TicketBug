@@ -7,5 +7,14 @@
     "DeveloperName": "Alice Vance",
     "AssignedAt": "2026-06-23T11:37:27.8340262Z",
     "MatchScore": 84
+  },
+  {
+    "Id": "314478b490394bfb8b0f40fb",
+    "TicketId": "6319f3f670d34dc798662c65",
+    "TicketTitle": "Full Stack Development 4 - Copy",
+    "DeveloperId": "4d116448b89e4a97bf4e2345",
+    "DeveloperName": "Evan Wright",
+    "AssignedAt": "2026-06-23T12:32:15.7708969Z",
+    "MatchScore": 46.7
   }
 ]
