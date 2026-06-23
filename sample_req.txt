@@ -1,0 +1,3 @@
+We need an expert frontend developer to build the user interface of TicketBug.
+The stack must be built in Angular and use TypeScript.
+Styling should be done using clean CSS and HTML.

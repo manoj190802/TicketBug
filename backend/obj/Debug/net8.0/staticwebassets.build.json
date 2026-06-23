@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "hiJOQx/Xb9lY6pOwfHS82PiME7nSmOQKNb3V1G4xMCM=",
+  "Source": "TicketBug.Backend",
+  "BasePath": "_content/TicketBug.Backend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

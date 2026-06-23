@@ -1,0 +1,19 @@
+[
+  {
+    "Id": "fcc3101872e44b9ab7b1fc69",
+    "Title": "Frontend UI Build",
+    "Description": "Build the dashboard user interface",
+    "Category": "Frontend",
+    "RequiredSkills": [
+      "typescript",
+      "css",
+      "angular",
+      "html",
+      "frontend"
+    ],
+    "AssignedDeveloperId": "17a5a8fbccc44f58b784919f",
+    "AssignedDeveloperName": "Alice Vance",
+    "Status": "Assigned",
+    "CreatedAt": "2026-06-23T11:36:57.8446165Z"
+  }
+]

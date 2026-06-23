@@ -1,0 +1,194 @@
+<div class="upload-header" style="margin-bottom: 32px;">
+  <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Analyze & <span class="gradient-text">Match</span></h1>
+  <p style="color: var(--text-secondary);">Upload software requirement documents to classify tasks and automatically find the best developer match.</p>
+</div>
+
+<!-- Success assignment overlay -->
+<div *ngIf="assignmentSuccess" class="glass-card" style="text-align: center; padding: 48px; border-color: var(--color-success); margin-bottom: 32px;">
+  <div style="font-size: 4rem; color: var(--color-success); line-height: 1; margin-bottom: 16px;">✓</div>
+  <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">Ticket Assigned Successfully!</h2>
+  <p style="color: var(--text-secondary);">Developer workloads updated. Redirecting to Dashboard...</p>
+</div>
+
+<!-- Main view -->
+<div *ngIf="!assignmentSuccess" class="upload-layout">
+
+  <!-- Error display -->
+  <div *ngIf="errorMessage" class="glass-card" style="border-left: 4px solid var(--color-danger); padding: 16px 24px; margin-bottom: 24px;">
+    <h4 style="color: var(--color-danger); font-weight: 700; margin-bottom: 4px;">Error Encountered</h4>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">{{ errorMessage }}</p>
+  </div>
+
+  <!-- INITIAL STATE: SHOW UPLOAD FORM -->
+  <div *ngIf="!analyzedTicket && !loading" class="upload-grid">
+    <!-- Form Card -->
+    <div class="glass-card">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 24px;">Upload Requirements</h2>
+      
+      <div class="form-group">
+        <label class="form-label">Requirement Document</label>
+        
+        <!-- Drag & Drop Zone -->
+        <div *ngIf="!selectedFile" 
+             class="drag-drop-zone"
+             [class.dragover]="dragover"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+          <div class="upload-icon">📁</div>
+          <div>
+            <p style="font-weight: 600; margin-bottom: 4px;">Drag and drop your file here</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">or click to browse from system</p>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Supports PDF, DOCX, and TXT</span>
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept=".pdf,.docx,.txt" style="display: none;">
+        </div>
+
+        <!-- File preview -->
+        <div *ngIf="selectedFile" class="file-preview">
+          <div style="display: flex; align-items: center; gap: 12px; overflow: hidden;">
+            <span style="font-size: 1.8rem;">📄</span>
+            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <p style="font-weight: 600; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis;">{{ selectedFile.name }}</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">{{ (selectedFile.size / 1024).toFixed(1) }} KB</p>
+            </div>
+          </div>
+          <button (click)="clearFile()" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Clear</button>
+        </div>
+      </div>
+
+      <!-- Additional fields -->
+      <div class="form-group">
+        <label class="form-label" for="title">Ticket Title (Optional)</label>
+        <input type="text" id="title" [(ngModel)]="title" class="form-control" placeholder="Defaults to file name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="description">Additional Notes / Description (Optional)</label>
+        <textarea id="description" [(ngModel)]="description" class="form-control" rows="3" placeholder="Provide extra instructions for context"></textarea>
+      </div>
+
+      <button (click)="onSubmit()" [disabled]="!selectedFile" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        Analyze Requirement
+      </button>
+    </div>
+
+    <!-- Info side -->
+    <div class="glass-card" style="background: rgba(19, 27, 46, 0.25);">
+      <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">AI Requirement Classifier</h2>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 16px;">
+        Upload client request files, technical specs, or sprint documents. The AI service will read the text and perform:
+      </p>
+      
+      <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 20px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px;">
+        <li><strong>Task Categorization:</strong> Identifies whether work corresponds to **Frontend**, **Backend**, or **Full Stack**.</li>
+        <li><strong>Skill Extraction:</strong> Scours text to identify required tech tools like **Angular**, **.NET**, **Python**, **SQL**, etc.</li>
+        <li><strong>Intelligent Matching:</strong> Analyzes all active developers based on core skills matching, experience levels, and workload capacities.</li>
+      </ul>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 20px;">
+        <h4 style="font-weight: 600; margin-bottom: 8px; font-size: 0.95rem;">Accepted Document Formats</h4>
+        <div style="display: flex; gap: 10px;">
+          <span class="skill-tag" style="padding: 4px 12px; font-weight: 600;">PDF (.pdf)</span>
+          <span class="skill-tag" style="padding: 4px 12px; font-weight: 600;">Word (.docx)</span>
+          <span class="skill-tag" style="padding: 4px 12px; font-weight: 600;">Text (.txt)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 350px; gap: 20px;">
+    <div style="width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.05); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div style="text-align: center;">
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">AI Engine Parsing Requirements...</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Extracting keywords, categorizing component layers, and fetching developer metrics.</p>
+    </div>
+  </div>
+
+  <!-- RESULTS STATE -->
+  <div *ngIf="analyzedTicket && !loading" class="upload-grid">
+    <!-- Ticket Details -->
+    <div class="glass-card analysis-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <span class="badge badge-fullstack" style="font-size: 0.75rem; text-transform: uppercase;">Analysis Complete</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Word count: {{ analyzedTicket.description.split(' ').length }}</span>
+      </div>
+
+      <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px;">{{ analyzedTicket.title }}</h2>
+      
+      <div class="form-group" style="margin-bottom: 24px;">
+        <span class="form-label" style="margin-bottom: 4px;">Classified Category</span>
+        <span class="badge" [ngClass]="{
+          'badge-frontend': analyzedTicket.category.toLowerCase() === 'frontend',
+          'badge-backend': analyzedTicket.category.toLowerCase() === 'backend',
+          'badge-fullstack': analyzedTicket.category.toLowerCase() === 'full stack'
+        }" style="font-size: 0.95rem; padding: 6px 14px; border-radius: var(--radius-sm);">{{ analyzedTicket.category }}</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <span class="form-label">Required Skills Extracted</span>
+        <div class="skills-container">
+          <span *ngFor="let skill of analyzedTicket.requiredSkills" class="skill-tag" style="font-size: 0.85rem; padding: 4px 10px;">{{ skill }}</span>
+          <span *ngIf="analyzedTicket.requiredSkills.length === 0" style="color: var(--text-muted); font-style: italic;">No specific skill keywords parsed.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <span class="form-label">Document Text Summary Extract</span>
+        <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-secondary); max-height: 250px; overflow-y: auto; line-height: 1.6;">
+          {{ analyzedTicket.description }}
+        </div>
+      </div>
+
+      <button (click)="clearFile()" class="btn btn-secondary" style="margin-top: 24px; width: 100%;">
+        Upload Another Document
+      </button>
+    </div>
+
+    <!-- Recommendations -->
+    <div>
+      <div class="section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke-width: 2.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <h2 style="font-size: 1.4rem;">AI Developer Matches</h2>
+      </div>
+
+      <div *ngIf="recommendations.length === 0" class="glass-card" style="text-align: center; color: var(--text-secondary); padding: 40px;">
+        No developers found matching this requirement profile.
+      </div>
+
+      <div class="recs-container">
+        <div *ngFor="let rec of recommendations; let i = index" class="glass-card rec-card">
+          
+          <div class="rec-info-side">
+            <!-- Radial Match score indicator -->
+            <div class="score-circle" [ngClass]="getScoreClass(rec.matchScore)">
+              <span>{{ rec.matchScore }}%</span>
+              <span class="score-label">Match</span>
+            </div>
+
+            <div style="flex-grow: 1;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700;">{{ rec.developer.name }}</h3>
+                <span *ngIf="i === 0" class="badge badge-success" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.7rem; padding: 2px 8px;">Best Match</span>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                {{ rec.developer.experience }} Yrs Exp &bull; Workload: {{ rec.developer.workload }} Active Tasks
+              </p>
+              <p class="explanation-text">{{ rec.explanation }}</p>
+            </div>
+          </div>
+
+          <div>
+            <button (click)="assignTicket(rec.developer.id, rec.matchScore)" [disabled]="submitting" class="btn btn-primary" style="padding: 10px 16px; font-size: 0.85rem; border-radius: var(--radius-sm);">
+              Assign
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,105 @@
+<div class="developers-header" style="margin-bottom: 32px;">
+  <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Developer <span class="gradient-text">Roster</span></h1>
+  <p style="color: var(--text-secondary);">Manage developer resources, experience levels, skills, and current work assignment availability.</p>
+</div>
+
+<div class="devs-layout">
+  <!-- Left Side: List -->
+  <div class="glass-card devs-list-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h2 style="font-size: 1.3rem; font-weight: 700;">Active Roster</h2>
+      <span style="font-size: 0.85rem; color: var(--text-secondary);">{{ developers.length }} Team Members</span>
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; gap: 12px;">
+      <div style="width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--color-primary-light); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Fetching developer records...</p>
+    </div>
+
+    <div *ngIf="!loading && developers.length === 0" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+      No developers registered yet. Fill out the form to add team members.
+    </div>
+
+    <div *ngIf="!loading && developers.length > 0" class="custom-table-container">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Expertise</th>
+            <th>Experience</th>
+            <th>Workload</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dev of developers">
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="dev-avatar">{{ getInitials(dev.name) }}</div>
+                <span style="font-weight: 600;">{{ dev.name }}</span>
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px; max-width: 250px;">
+                <span *ngFor="let skill of dev.skills" class="skill-tag">{{ skill }}</span>
+              </div>
+            </td>
+            <td>{{ dev.experience }} Years</td>
+            <td style="font-weight: 600;">{{ dev.workload }} Active</td>
+            <td>
+              <span class="badge" 
+                    [style.background-color]="getStatusBadgeColor(dev.availabilityStatus)"
+                    [style.color]="getStatusTextColor(dev.availabilityStatus)"
+                    [style.border]="'1px solid ' + getStatusTextColor(dev.availabilityStatus)">
+                {{ dev.availabilityStatus }}
+              </span>
+            </td>
+            <td>
+              <button (click)="deleteDeveloper(dev.id)" class="delete-btn">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right Side: Form -->
+  <div class="glass-card">
+    <h2 class="form-title">Add Developer</h2>
+    <form [formGroup]="developerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input type="text" id="name" formControlName="name" class="form-control" placeholder="e.g. John Doe">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="skills">Skills / Technologies</label>
+        <input type="text" id="skills" formControlName="skills" class="form-control" placeholder="comma-separated, e.g. angular, dotnet, c#">
+        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">Separate skills with commas.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="experience">Years of Experience</label>
+        <input type="number" id="experience" formControlName="experience" class="form-control" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="availabilityStatus">Availability Status</label>
+        <select id="availabilityStatus" formControlName="availabilityStatus" class="form-control">
+          <option value="Available">Available</option>
+          <option value="Busy">Busy</option>
+          <option value="On Leave">On Leave</option>
+        </select>
+      </div>
+
+      <button type="submit" [disabled]="developerForm.invalid || submitting" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        <span *ngIf="!submitting">Add Developer</span>
+        <span *ngIf="submitting">Registering...</span>
+      </button>
+    </form>
+  </div>
+</div>

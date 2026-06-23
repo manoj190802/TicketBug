@@ -1,0 +1,54 @@
+<div class="history-header" style="margin-bottom: 32px;">
+  <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Assignment <span class="gradient-text">History</span></h1>
+  <p style="color: var(--text-secondary);">Audit log tracking requirement parses, matching recommendations, and final allocations.</p>
+</div>
+
+<div class="glass-card history-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2 style="font-size: 1.3rem; font-weight: 700;">System logs</h2>
+    <span style="font-size: 0.85rem; color: var(--text-secondary);">{{ historyLogs.length }} Entries total</span>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; gap: 12px;">
+    <div style="width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--color-primary-light); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <p style="color: var(--text-secondary); font-size: 0.9rem;">Reading audit trail...</p>
+  </div>
+
+  <div *ngIf="!loading && historyLogs.length === 0" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+    No tickets have been assigned to developers yet.
+  </div>
+
+  <div *ngIf="!loading && historyLogs.length > 0" class="custom-table-container">
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Requirement Ticket</th>
+          <th>Assigned Developer</th>
+          <th>Allocation Date</th>
+          <th>Match Match Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of historyLogs">
+          <td style="font-weight: 600;">{{ log.ticketTitle }}</td>
+          <td>
+            <span style="font-weight: 500;">👤 {{ log.developerName }}</span>
+          </td>
+          <td style="color: var(--text-secondary);">
+            {{ log.assignedAt | date:'medium' }}
+          </td>
+          <td>
+            <span class="badge" 
+                  [style.background-color]="getScoreColor(log.matchScore) + '1c'"
+                  [style.color]="getScoreColor(log.matchScore)"
+                  [style.border]="'1px solid ' + getScoreColor(log.matchScore)"
+                  style="font-weight: 700; padding: 4px 12px;">
+              {{ log.matchScore }}%
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
