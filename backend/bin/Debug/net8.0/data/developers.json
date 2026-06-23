@@ -70,5 +70,24 @@
     "Experience": 5,
     "Workload": 1,
     "AvailabilityStatus": "Available"
+  },
+  {
+    "Id": "a99dfef977e64ba8844e6a59",
+    "Name": "Manoj",
+    "Skills": [
+      "react",
+      "angular",
+      "html",
+      "css",
+      "js",
+      ".net",
+      "c#",
+      "tailwind",
+      "bootstrab",
+      "mongodb"
+    ],
+    "Experience": 7,
+    "Workload": 1,
+    "AvailabilityStatus": "Available"
   }
 ]
