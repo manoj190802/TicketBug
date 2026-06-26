@@ -154,6 +154,158 @@ namespace TicketBug.Backend.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            try
+            {
+                var ticket = await _dbService.GetTicketByIdAsync(id);
+                if (ticket == null) return NotFound($"Ticket with ID {id} not found.");
+                return Ok(ticket);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] TaskTicket ticket)
+        {
+            try
+            {
+                if (ticket == null) return BadRequest("Ticket data is null.");
+                ticket.CreatedAt = DateTime.UtcNow;
+
+                if (!string.IsNullOrEmpty(ticket.AssignedDeveloperId))
+                {
+                    var dev = await _dbService.GetDeveloperByIdAsync(ticket.AssignedDeveloperId);
+                    if (dev != null)
+                    {
+                        ticket.AssignedDeveloperName = dev.Name;
+                        ticket.Status = "Assigned";
+                        dev.Workload += 1;
+                        await _dbService.UpdateDeveloperAsync(dev.Id!, dev);
+                    }
+                    else
+                    {
+                        ticket.AssignedDeveloperId = null;
+                        ticket.AssignedDeveloperName = null;
+                        ticket.Status = "Pending";
+                    }
+                }
+                else
+                {
+                    ticket.AssignedDeveloperName = null;
+                    ticket.Status = "Pending";
+                }
+
+                await _dbService.CreateTicketAsync(ticket);
+                return Ok(ticket);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] TaskTicket updatedTicket)
+        {
+            try
+            {
+                var existing = await _dbService.GetTicketByIdAsync(id);
+                if (existing == null) return NotFound($"Ticket with ID {id} not found.");
+
+                if (existing.AssignedDeveloperId != updatedTicket.AssignedDeveloperId)
+                {
+                    if (!string.IsNullOrEmpty(existing.AssignedDeveloperId) && existing.Status == "Assigned")
+                    {
+                        var prevDev = await _dbService.GetDeveloperByIdAsync(existing.AssignedDeveloperId);
+                        if (prevDev != null)
+                        {
+                            prevDev.Workload = Math.Max(0, prevDev.Workload - 1);
+                            await _dbService.UpdateDeveloperAsync(prevDev.Id!, prevDev);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(updatedTicket.AssignedDeveloperId))
+                    {
+                        var newDev = await _dbService.GetDeveloperByIdAsync(updatedTicket.AssignedDeveloperId);
+                        if (newDev != null)
+                        {
+                            updatedTicket.AssignedDeveloperName = newDev.Name;
+                            if (updatedTicket.Status == "Assigned")
+                            {
+                                newDev.Workload += 1;
+                                await _dbService.UpdateDeveloperAsync(newDev.Id!, newDev);
+                            }
+                        }
+                        else
+                        {
+                            updatedTicket.AssignedDeveloperId = null;
+                            updatedTicket.AssignedDeveloperName = null;
+                        }
+                    }
+                    else
+                    {
+                        updatedTicket.AssignedDeveloperName = null;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(existing.AssignedDeveloperId))
+                {
+                    var dev = await _dbService.GetDeveloperByIdAsync(existing.AssignedDeveloperId);
+                    if (dev != null)
+                    {
+                        if (existing.Status == "Assigned" && updatedTicket.Status != "Assigned")
+                        {
+                            dev.Workload = Math.Max(0, dev.Workload - 1);
+                            await _dbService.UpdateDeveloperAsync(dev.Id!, dev);
+                        }
+                        else if (existing.Status != "Assigned" && updatedTicket.Status == "Assigned")
+                        {
+                            dev.Workload += 1;
+                            await _dbService.UpdateDeveloperAsync(dev.Id!, dev);
+                        }
+                    }
+                }
+
+                await _dbService.UpdateTicketAsync(id, updatedTicket);
+                return Ok(updatedTicket);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                var existing = await _dbService.GetTicketByIdAsync(id);
+                if (existing == null) return NotFound($"Ticket with ID {id} not found.");
+
+                if (!string.IsNullOrEmpty(existing.AssignedDeveloperId) && existing.Status == "Assigned")
+                {
+                    var dev = await _dbService.GetDeveloperByIdAsync(existing.AssignedDeveloperId);
+                    if (dev != null)
+                    {
+                        dev.Workload = Math.Max(0, dev.Workload - 1);
+                        await _dbService.UpdateDeveloperAsync(dev.Id!, dev);
+                    }
+                }
+
+                await _dbService.DeleteTicketAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         private async Task<List<RecommendationResult>> GetDeveloperRecommendations(TaskTicket ticket)
         {
             var devs = await _dbService.GetDevelopersAsync();

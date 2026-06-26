@@ -1,62 +1,5 @@
 [
   {
-    "Id": "17a5a8fbccc44f58b784919f",
-    "Name": "Alice Vance",
-    "Skills": [
-      "angular",
-      "html",
-      "css",
-      "typescript",
-      "javascript"
-    ],
-    "Experience": 4,
-    "Workload": 1,
-    "AvailabilityStatus": "Available"
-  },
-  {
-    "Id": "b808b2fe82f1499e8b1b3325",
-    "Name": "Bob Sterling",
-    "Skills": [
-      "dotnet",
-      "c#",
-      "sql",
-      "postgres",
-      "database"
-    ],
-    "Experience": 5,
-    "Workload": 1,
-    "AvailabilityStatus": "Available"
-  },
-  {
-    "Id": "94810104a63a4dd8a79a6780",
-    "Name": "Charlie Cruz",
-    "Skills": [
-      "angular",
-      "dotnet",
-      "c#",
-      "typescript",
-      "mongodb"
-    ],
-    "Experience": 6,
-    "Workload": 3,
-    "AvailabilityStatus": "Busy"
-  },
-  {
-    "Id": "fa8ca12be3b94679b2b30a8b",
-    "Name": "Diana Prince",
-    "Skills": [
-      "angular",
-      "react",
-      "vue",
-      "javascript",
-      "tailwind",
-      "css"
-    ],
-    "Experience": 3,
-    "Workload": 2,
-    "AvailabilityStatus": "Available"
-  },
-  {
     "Id": "4d116448b89e4a97bf4e2345",
     "Name": "Evan Wright",
     "Skills": [
@@ -68,8 +11,9 @@
       "backend"
     ],
     "Experience": 5,
-    "Workload": 2,
-    "AvailabilityStatus": "Available"
+    "Workload": 1,
+    "AvailabilityStatus": "Available",
+    "CreatedAt": "2026-06-26T16:55:05.5613502Z"
   },
   {
     "Id": "a99dfef977e64ba8844e6a59",
@@ -87,17 +31,21 @@
       "mongodb"
     ],
     "Experience": 7,
-    "Workload": 1,
-    "AvailabilityStatus": "Available"
+    "Workload": 0,
+    "AvailabilityStatus": "Available",
+    "CreatedAt": "2026-06-26T16:55:05.560157Z"
   },
   {
-    "Id": "2267e613986242a783a5ef8b",
-    "Name": "manoj",
+    "Id": "671745334a8c4b42bc134ee4",
+    "Name": "Jane Developer",
     "Skills": [
-      "html"
+      "typescript",
+      "angular",
+      "node"
     ],
-    "Experience": 2,
+    "Experience": 7,
     "Workload": 0,
-    "AvailabilityStatus": "Available"
+    "AvailabilityStatus": "Available",
+    "CreatedAt": "2026-06-26T16:58:50.1914972Z"
   }
 ]

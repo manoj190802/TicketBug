@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TicketBug.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c879edacb91b377c03e103a5cc4e55bcdd74836")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c4eb100f6bbe1eb81f09461bac5d8b0eed5d1905")]
 [assembly: System.Reflection.AssemblyProductAttribute("TicketBug.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TicketBug.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

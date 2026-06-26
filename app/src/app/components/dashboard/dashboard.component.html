@@ -1,6 +1,17 @@
-<div class="dashboard-header" style="margin-bottom: 32px;">
-  <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Resource & Workload <span class="gradient-text">Dashboard</span></h1>
-  <p style="color: var(--text-secondary);">Overview of your team's availability, current ticket allocations, and parsed requirements.</p>
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 32px;">
+  <div class="dashboard-header">
+    <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Resource & Workload <span class="gradient-text">Dashboard</span></h1>
+    <p style="color: var(--text-secondary);">Overview of your team's availability, current ticket allocations, and parsed requirements.</p>
+  </div>
+  
+  <div class="time-filter-container">
+    <div class="time-filter-pills">
+      <button (click)="setTimeFilter('all')" [class.active]="timeFilter === 'all'" class="filter-pill">All Time</button>
+      <button (click)="setTimeFilter('week')" [class.active]="timeFilter === 'week'" class="filter-pill">This Week</button>
+      <button (click)="setTimeFilter('month')" [class.active]="timeFilter === 'month'" class="filter-pill">This Month</button>
+      <button (click)="setTimeFilter('year')" [class.active]="timeFilter === 'year'" class="filter-pill">This Year</button>
+    </div>
+  </div>
 </div>
 
 <!-- Loader -->
@@ -18,32 +29,58 @@
 <div *ngIf="!loading">
   <!-- Stats row -->
   <div class="dashboard-grid">
-    <div class="glass-card stat-card">
-      <div class="stat-icon">📇</div>
-      <div class="stat-info">
-        <h3>{{ totalTickets }}</h3>
-        <p>Total Tickets</p>
+    <div class="glass-card stat-card interactive-card">
+      <div class="stat-main">
+        <div class="stat-icon">📇</div>
+        <div class="stat-info">
+          <h3>{{ filteredTotalTickets }}</h3>
+          <p>Total Tickets</p>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" (click)="openTicketForm(); $event.stopPropagation()" title="Create Ticket">+</button>
+        <button class="action-btn" (click)="showManageTicketsModal = true; $event.stopPropagation()" title="Manage Tickets">⚙️</button>
       </div>
     </div>
-    <div class="glass-card stat-card">
-      <div class="stat-icon" style="color: var(--color-success); background: rgba(16, 185, 129, 0.1);">✓</div>
-      <div class="stat-info">
-        <h3>{{ assignedTickets }}</h3>
-        <p>Assigned Tickets</p>
+
+    <div class="glass-card stat-card interactive-card">
+      <div class="stat-main">
+        <div class="stat-icon" style="color: var(--color-success); background: rgba(16, 185, 129, 0.1);">✓</div>
+        <div class="stat-info">
+          <h3>{{ filteredAssignedTickets }}</h3>
+          <p>Assigned Tickets</p>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" (click)="showManageTicketsModal = true; $event.stopPropagation()" title="Manage Tickets">⚙️</button>
       </div>
     </div>
-    <div class="glass-card stat-card">
-      <div class="stat-icon" style="color: var(--color-warning); background: rgba(245, 158, 11, 0.1);">⏳</div>
-      <div class="stat-info">
-        <h3>{{ pendingTickets }}</h3>
-        <p>Pending Tickets</p>
+
+    <div class="glass-card stat-card interactive-card">
+      <div class="stat-main">
+        <div class="stat-icon" style="color: var(--color-warning); background: rgba(245, 158, 11, 0.1);">⏳</div>
+        <div class="stat-info">
+          <h3>{{ filteredPendingTickets }}</h3>
+          <p>Pending Tickets</p>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" (click)="openTicketForm(); $event.stopPropagation()" title="Create Ticket">+</button>
+        <button class="action-btn" (click)="showManageTicketsModal = true; $event.stopPropagation()" title="Manage Tickets">⚙️</button>
       </div>
     </div>
-    <div class="glass-card stat-card">
-      <div class="stat-icon" style="color: var(--color-secondary); background: rgba(236, 72, 153, 0.1);">👥</div>
-      <div class="stat-info">
-        <h3>{{ developers.length }}</h3>
-        <p>Active Developers</p>
+
+    <div class="glass-card stat-card interactive-card">
+      <div class="stat-main">
+        <div class="stat-icon" style="color: var(--color-secondary); background: rgba(236, 72, 153, 0.1);">👥</div>
+        <div class="stat-info">
+          <h3>{{ filteredDevsCount }}</h3>
+          <p>Active Developers</p>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn" (click)="openDevForm(); $event.stopPropagation()" title="Add Developer">+</button>
+        <button class="action-btn" (click)="showManageDevsModal = true; $event.stopPropagation()" title="Manage Developers">⚙️</button>
       </div>
     </div>
   </div>
@@ -131,9 +168,9 @@
               <span *ngIf="!ticket.assignedDeveloperName" style="color: var(--text-muted); font-style: italic;">Unassigned</span>
             </td>
             <td>
-              <span [style.background-color]="ticket.status === 'Assigned' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'"
-                    [style.color]="ticket.status === 'Assigned' ? 'var(--color-success)' : 'var(--color-warning)'"
-                    [style.border-color]="ticket.status === 'Assigned' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'"
+              <span [style.background-color]="ticket.status === 'Assigned' ? 'rgba(16, 185, 129, 0.15)' : (ticket.status === 'Completed' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(245, 158, 11, 0.15)')"
+                    [style.color]="ticket.status === 'Assigned' ? 'var(--color-success)' : (ticket.status === 'Completed' ? 'var(--color-primary-light)' : 'var(--color-warning)')"
+                    [style.border-color]="ticket.status === 'Assigned' ? 'rgba(16, 185, 129, 0.3)' : (ticket.status === 'Completed' ? 'rgba(99, 102, 241, 0.3)' : 'rgba(245, 158, 11, 0.3)')"
                     class="badge" style="border: 1px solid;">
                 {{ ticket.status }}
               </span>
@@ -142,5 +179,212 @@
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Manage Tickets Modal -->
+<div class="modal-backdrop" *ngIf="showManageTicketsModal" (click)="showManageTicketsModal = false">
+  <div class="glass-card modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Manage Tickets</h2>
+      <button class="close-btn" (click)="showManageTicketsModal = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <p style="color: var(--text-secondary); font-size: 0.90rem;">Total tickets loaded: {{ tickets.length }}</p>
+        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" (click)="openTicketForm(); showManageTicketsModal = false">
+          + New Ticket
+        </button>
+      </div>
+      <div class="custom-table-container modal-table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Developer</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of tickets">
+              <td style="font-weight: 600; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ t.title }}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'badge-frontend': t.category.toLowerCase() === 'frontend',
+                  'badge-backend': t.category.toLowerCase() === 'backend',
+                  'badge-fullstack': t.category.toLowerCase() === 'full stack'
+                }">{{ t.category }}</span>
+              </td>
+              <td>
+                <span [style.background-color]="t.status === 'Assigned' ? 'rgba(16, 185, 129, 0.15)' : (t.status === 'Completed' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(245, 158, 11, 0.15)')"
+                      [style.color]="t.status === 'Assigned' ? 'var(--color-success)' : (t.status === 'Completed' ? 'var(--color-primary-light)' : 'var(--color-warning)')"
+                      class="badge">
+                  {{ t.status }}
+                </span>
+              </td>
+              <td style="font-size: 0.85rem;">{{ t.assignedDeveloperName || 'Unassigned' }}</td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 8px;">
+                  <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px;" (click)="openTicketForm(t); showManageTicketsModal = false">Edit</button>
+                  <button class="btn btn-secondary btn-danger-text" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px;" (click)="deleteTicket(t.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket Form Modal -->
+<div class="modal-backdrop" *ngIf="showTicketFormModal" (click)="showTicketFormModal = false">
+  <div class="glass-card modal-container modal-form" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingTicket ? 'Edit Ticket' : 'Create Ticket' }}</h2>
+      <button class="close-btn" (click)="showTicketFormModal = false">&times;</button>
+    </div>
+    <form [formGroup]="ticketForm" (ngSubmit)="saveTicket()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Ticket Title</label>
+          <input type="text" formControlName="title" class="form-control" placeholder="e.g. Implement User Authentication">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea formControlName="description" class="form-control" rows="3" placeholder="Provide a summary of task requirements..."></textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select formControlName="category" class="form-control">
+              <option value="Frontend">Frontend</option>
+              <option value="Backend">Backend</option>
+              <option value="Full Stack">Full Stack</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select formControlName="status" class="form-control">
+              <option value="Pending">Pending</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Required Skills</label>
+          <input type="text" formControlName="requiredSkills" class="form-control" placeholder="e.g. angular, typescript, css (comma-separated)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assign Developer</label>
+          <select formControlName="assignedDeveloperId" class="form-control">
+            <option value="">Unassigned</option>
+            <option *ngFor="let dev of developers" [value]="dev.id">{{ dev.name }} ({{ dev.availabilityStatus }})</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="showTicketFormModal = false">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="ticketForm.invalid || submittingTicket">
+          {{ submittingTicket ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Manage Developers Modal -->
+<div class="modal-backdrop" *ngIf="showManageDevsModal" (click)="showManageDevsModal = false">
+  <div class="glass-card modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Manage Developers</h2>
+      <button class="close-btn" (click)="showManageDevsModal = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <p style="color: var(--text-secondary); font-size: 0.90rem;">Total developers: {{ developers.length }}</p>
+        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" (click)="openDevForm(); showManageDevsModal = false">
+          + New Developer
+        </button>
+      </div>
+      <div class="custom-table-container modal-table-container">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Experience</th>
+              <th>Status</th>
+              <th>Workload</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of developers">
+              <td style="font-weight: 600;">{{ d.name }}</td>
+              <td>{{ d.experience }} Years</td>
+              <td>
+                <span class="badge" [style.background-color]="getAvailabilityDotColor(d.availabilityStatus) + '22'" [style.color]="getAvailabilityDotColor(d.availabilityStatus)">
+                  {{ d.availabilityStatus }}
+                </span>
+              </td>
+              <td>{{ d.workload }} Tasks</td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 8px;">
+                  <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px;" (click)="openDevForm(d); showManageDevsModal = false">Edit</button>
+                  <button class="btn btn-secondary btn-danger-text" style="padding: 4px 8px; font-size: 0.75rem; border-radius: 6px;" (click)="deleteDev(d.id)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Developer Form Modal -->
+<div class="modal-backdrop" *ngIf="showDevFormModal" (click)="showDevFormModal = false">
+  <div class="glass-card modal-container modal-form" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingDev ? 'Edit Developer' : 'Add Developer' }}</h2>
+      <button class="close-btn" (click)="showDevFormModal = false">&times;</button>
+    </div>
+    <form [formGroup]="devForm" (ngSubmit)="saveDev()">
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" formControlName="name" class="form-control" placeholder="e.g. Alice Vance">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Skills / Technologies</label>
+          <input type="text" formControlName="skills" class="form-control" placeholder="e.g. angular, html, css (comma-separated)">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Years of Experience</label>
+            <input type="number" formControlName="experience" class="form-control" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Availability Status</label>
+            <select formControlName="availabilityStatus" class="form-control">
+              <option value="Available">Available</option>
+              <option value="Busy">Busy</option>
+              <option value="On Leave">On Leave</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="showDevFormModal = false">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="devForm.invalid || submittingDev">
+          {{ submittingDev ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+    </form>
   </div>
 </div>

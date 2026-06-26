@@ -43,5 +43,23 @@
     "DeveloperName": "Evan Wright",
     "AssignedAt": "2026-06-26T16:41:07.8666214Z",
     "MatchScore": 67
+  },
+  {
+    "Id": "af64b4cf369c43a1975cacac",
+    "TicketId": "53070d1803d64510ab89201e",
+    "TicketTitle": "Frontend_Tasks",
+    "DeveloperId": "a99dfef977e64ba8844e6a59",
+    "DeveloperName": "Manoj",
+    "AssignedAt": "2026-06-26T16:55:05.567716Z",
+    "MatchScore": 60.7
+  },
+  {
+    "Id": "e9e5caa102c8489685314044",
+    "TicketId": "224e12936f5a438ba9a33049",
+    "TicketTitle": "Frontend_Tasks",
+    "DeveloperId": "4d116448b89e4a97bf4e2345",
+    "DeveloperName": "Evan Wright",
+    "AssignedAt": "2026-06-26T16:58:41.4310633Z",
+    "MatchScore": 45.6
   }
 ]

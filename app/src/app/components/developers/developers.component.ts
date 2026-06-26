@@ -31,6 +31,7 @@ export class DevelopersComponent implements OnInit {
       name: ['', [Validators.required]],
       skills: ['', [Validators.required]],
       experience: [0, [Validators.required, Validators.min(0)]],
+      workload: [0, [Validators.required, Validators.min(0)]],
       availabilityStatus: ['Available', [Validators.required]]
     });
   }
@@ -65,7 +66,7 @@ export class DevelopersComponent implements OnInit {
       name: formVal.name,
       skills: skillsList,
       experience: formVal.experience,
-      workload: 0,
+      workload: formVal.workload,
       availabilityStatus: formVal.availabilityStatus
     };
 

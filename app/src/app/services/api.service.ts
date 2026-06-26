@@ -10,6 +10,7 @@ export interface Developer {
   experience: number;
   workload: number;
   availabilityStatus: string;
+  createdAt?: string;
 }
 
 export interface TaskTicket {
@@ -78,6 +79,18 @@ export class ApiService {
   // Tickets
   getTickets(): Observable<TaskTicket[]> {
     return this.http.get<TaskTicket[]>(`${this.apiUrl}/tickets`);
+  }
+
+  createTicket(ticket: TaskTicket): Observable<TaskTicket> {
+    return this.http.post<TaskTicket>(`${this.apiUrl}/tickets`, ticket);
+  }
+
+  updateTicket(id: string, ticket: TaskTicket): Observable<TaskTicket> {
+    return this.http.put<TaskTicket>(`${this.apiUrl}/tickets/${id}`, ticket);
+  }
+
+  deleteTicket(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/tickets/${id}`);
   }
 
   getHistory(): Observable<AssignmentHistory[]> {

@@ -23,5 +23,8 @@ namespace TicketBug.Backend.Models
 
         [BsonElement("AvailabilityStatus")]
         public string AvailabilityStatus { get; set; } = "Available"; // "Available", "Busy", "On Leave"
+
+        [BsonElement("CreatedAt")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

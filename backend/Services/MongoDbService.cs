@@ -69,6 +69,7 @@ namespace TicketBug.Backend.Services
             
             // Seed developers if database or JSON files are empty
             SeedDefaultDevelopers().Wait();
+            SeedDefaultTickets().Wait();
         }
 
         private void EnsureFileExists(string path, string defaultContent)
@@ -86,11 +87,11 @@ namespace TicketBug.Backend.Services
             {
                 var defaultDevs = new List<Developer>
                 {
-                    new() { Name = "Alice Vance", Skills = new() { "angular", "html", "css", "typescript", "javascript" }, Experience = 4, Workload = 0, AvailabilityStatus = "Available" },
-                    new() { Name = "Bob Sterling", Skills = new() { "dotnet", "c#", "sql", "postgres", "database" }, Experience = 5, Workload = 1, AvailabilityStatus = "Available" },
-                    new() { Name = "Charlie Cruz", Skills = new() { "angular", "dotnet", "c#", "typescript", "mongodb" }, Experience = 6, Workload = 3, AvailabilityStatus = "Busy" },
-                    new() { Name = "Diana Prince", Skills = new() { "angular", "react", "vue", "javascript", "tailwind", "css" }, Experience = 3, Workload = 1, AvailabilityStatus = "Available" },
-                    new() { Name = "Evan Wright", Skills = new() { "python", "fastapi", "mongodb", "rest api", "docker", "backend" }, Experience = 5, Workload = 0, AvailabilityStatus = "Available" }
+                    new() { Name = "Alice Vance", Skills = new() { "angular", "html", "css", "typescript", "javascript" }, Experience = 4, Workload = 0, AvailabilityStatus = "Available", CreatedAt = DateTime.UtcNow.AddDays(-10) },
+                    new() { Name = "Bob Sterling", Skills = new() { "dotnet", "c#", "sql", "postgres", "database" }, Experience = 5, Workload = 1, AvailabilityStatus = "Available", CreatedAt = DateTime.UtcNow.AddDays(-40) },
+                    new() { Name = "Charlie Cruz", Skills = new() { "angular", "dotnet", "c#", "typescript", "mongodb" }, Experience = 6, Workload = 3, AvailabilityStatus = "Busy", CreatedAt = DateTime.UtcNow.AddDays(-2) },
+                    new() { Name = "Diana Prince", Skills = new() { "angular", "react", "vue", "javascript", "tailwind", "css" }, Experience = 3, Workload = 1, AvailabilityStatus = "Available", CreatedAt = DateTime.UtcNow.AddDays(-1) },
+                    new() { Name = "Evan Wright", Skills = new() { "python", "fastapi", "mongodb", "rest api", "docker", "backend" }, Experience = 5, Workload = 0, AvailabilityStatus = "Available", CreatedAt = DateTime.UtcNow.AddDays(-200) }
                 };
 
                 foreach (var dev in defaultDevs)
@@ -98,6 +99,36 @@ namespace TicketBug.Backend.Services
                     await CreateDeveloperAsync(dev);
                 }
                 Console.WriteLine("Database seeded with default developers.");
+            }
+        }
+
+        private async Task SeedDefaultTickets()
+        {
+            var tickets = await GetTicketsAsync();
+            if (tickets.Count == 0)
+            {
+                var defaultTickets = new List<TaskTicket>
+                {
+                    new() { Title = "Angular State Management Refactoring", Description = "Refactor the state management using NgRx or simple services with RxJS.", Category = "Frontend", RequiredSkills = new() { "angular", "rxjs", "typescript" }, Status = "Assigned", AssignedDeveloperName = "Charlie Cruz", CreatedAt = DateTime.UtcNow.AddDays(-1) },
+                    new() { Title = "Deploy FastAPI AI Service", Description = "Configure and deploy the FastAPI service using Docker and set up FastAPI CORS endpoints.", Category = "Backend", RequiredSkills = new() { "python", "fastapi", "docker" }, Status = "Pending", CreatedAt = DateTime.UtcNow.AddDays(-3) },
+                    new() { Title = "Database Performance Optimization", Description = "Investigate slow queries in PostgreSQL and write optimized LINQ queries.", Category = "Backend", RequiredSkills = new() { "dotnet", "c#", "postgres", "database" }, Status = "Assigned", AssignedDeveloperName = "Bob Sterling", CreatedAt = DateTime.UtcNow.AddDays(-15) },
+                    new() { Title = "Build Landing Page UI", Description = "Implement a modern, responsive landing page using HTML and pure CSS.", Category = "Frontend", RequiredSkills = new() { "html", "css", "javascript" }, Status = "Pending", CreatedAt = DateTime.UtcNow.AddDays(-40) }
+                };
+
+                var devs = await GetDevelopersAsync();
+                foreach (var ticket in defaultTickets)
+                {
+                    if (!string.IsNullOrEmpty(ticket.AssignedDeveloperName))
+                    {
+                        var matchingDev = devs.FirstOrDefault(d => d.Name.Equals(ticket.AssignedDeveloperName, StringComparison.OrdinalIgnoreCase));
+                        if (matchingDev != null)
+                        {
+                            ticket.AssignedDeveloperId = matchingDev.Id;
+                        }
+                    }
+                    await CreateTicketAsync(ticket);
+                }
+                Console.WriteLine("Database seeded with default tickets.");
             }
         }
 
@@ -250,6 +281,26 @@ namespace TicketBug.Backend.Services
                 {
                     updatedTicket.Id = id;
                     tickets[index] = updatedTicket;
+                    File.WriteAllText(_ticketsFile, JsonSerializer.Serialize(tickets, new JsonSerializerOptions { WriteIndented = true }));
+                }
+            }
+        }
+
+        public async Task DeleteTicketAsync(string id)
+        {
+            if (!_useFallback)
+            {
+                await _ticketsCollection!.DeleteOneAsync(t => t.Id == id);
+                return;
+            }
+
+            lock (_lock)
+            {
+                var tickets = JsonSerializer.Deserialize<List<TaskTicket>>(File.ReadAllText(_ticketsFile)) ?? new();
+                var ticket = tickets.FirstOrDefault(t => t.Id == id);
+                if (ticket != null)
+                {
+                    tickets.Remove(ticket);
                     File.WriteAllText(_ticketsFile, JsonSerializer.Serialize(tickets, new JsonSerializerOptions { WriteIndented = true }));
                 }
             }
