@@ -1,0 +1,5 @@
+Requirement: Backend Engineer (FastAPI & .NET)
+We need a backend developer to build robust APIs and database connections.
+The stack will use Python, FastAPI, and .NET (C#) for core endpoints.
+Database connections should be built using MongoDB and SQL.
+Skills required: dotnet, c#, python, fastapi, mongodb, sql, rest api, backend.

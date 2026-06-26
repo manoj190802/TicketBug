@@ -1,0 +1,5 @@
+Requirement: Frontend Engineer (TaskGenie AI UI)
+We need an expert frontend developer to build the user interface of TaskGenie AI.
+The stack must be built in Angular and use TypeScript.
+Styling should be done using clean CSS, HTML, and Tailwind CSS.
+Skills required: angular, typescript, javascript, html, css, tailwind, ui, ux, frontend.

@@ -25,5 +25,14 @@
     "DeveloperName": "Manoj",
     "AssignedAt": "2026-06-23T12:54:57.6994622Z",
     "MatchScore": 58.7
+  },
+  {
+    "Id": "97fa0a88d11d48c2869fd68a",
+    "TicketId": "6d64901c19b944e3bc7a7d50",
+    "TicketTitle": "Full Stack Development 3 - Copy",
+    "DeveloperId": "fa8ca12be3b94679b2b30a8b",
+    "DeveloperName": "Diana Prince",
+    "AssignedAt": "2026-06-23T17:27:42.9237387Z",
+    "MatchScore": 45
   }
 ]

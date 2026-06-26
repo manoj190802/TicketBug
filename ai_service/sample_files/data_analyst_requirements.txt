@@ -1,0 +1,7 @@
+Requirement: Data Analyst for Business Intelligence
+We are seeking a Data Analyst to join our team and help us build actionable data visualizations.
+Key Tasks:
+- Clean and organize complex data using pandas and python.
+- Build interactive dashboards in Tableau and Power BI.
+- Query databases using SQL and perform statistical analytics.
+Skills required: data analytics, tableau, power bi, pandas, sql, excel, analytics, statistics.
