@@ -34,5 +34,14 @@
     "DeveloperName": "Diana Prince",
     "AssignedAt": "2026-06-23T17:27:42.9237387Z",
     "MatchScore": 45
+  },
+  {
+    "Id": "c2a12390ba0b4030b951d787",
+    "TicketId": "5f48fe46dcd94072ad1939ca",
+    "TicketTitle": "Backend_Tasks",
+    "DeveloperId": "4d116448b89e4a97bf4e2345",
+    "DeveloperName": "Evan Wright",
+    "AssignedAt": "2026-06-26T16:41:07.8666214Z",
+    "MatchScore": 67
   }
 ]

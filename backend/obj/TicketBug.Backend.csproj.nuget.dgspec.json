@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\My projects\\TicketBug\\backend\\TicketBug.Backend.csproj": {}
+    "C:\\My projects\\TaskGenie-AI\\backend\\TicketBug.Backend.csproj": {}
   },
   "projects": {
-    "C:\\My projects\\TicketBug\\backend\\TicketBug.Backend.csproj": {
+    "C:\\My projects\\TaskGenie-AI\\backend\\TicketBug.Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\My projects\\TicketBug\\backend\\TicketBug.Backend.csproj",
+        "projectUniqueName": "C:\\My projects\\TaskGenie-AI\\backend\\TicketBug.Backend.csproj",
         "projectName": "TicketBug.Backend",
-        "projectPath": "C:\\My projects\\TicketBug\\backend\\TicketBug.Backend.csproj",
+        "projectPath": "C:\\My projects\\TaskGenie-AI\\backend\\TicketBug.Backend.csproj",
         "packagesPath": "C:\\Users\\manoj\\.nuget\\packages\\",
-        "outputPath": "C:\\My projects\\TicketBug\\backend\\obj\\",
+        "outputPath": "C:\\My projects\\TaskGenie-AI\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\manoj\\AppData\\Roaming\\NuGet\\NuGet.Config"

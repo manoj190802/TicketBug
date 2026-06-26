@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rG2ls1jDWhI=",
+  "dgSpecHash": "gk6+pZDR5WM=",
   "success": true,
-  "projectFilePath": "C:\\My projects\\TicketBug\\backend\\TicketBug.Backend.csproj",
+  "projectFilePath": "C:\\My projects\\TaskGenie-AI\\backend\\TicketBug.Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\manoj\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\manoj\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.28\\microsoft.aspnetcore.openapi.8.0.28.nupkg.sha512",

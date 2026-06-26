@@ -217,5 +217,23 @@
     "AssignedDeveloperName": "Diana Prince",
     "Status": "Assigned",
     "CreatedAt": "2026-06-23T17:27:23.9626201Z"
+  },
+  {
+    "Id": "5f48fe46dcd94072ad1939ca",
+    "Title": "Backend_Tasks",
+    "Description": "\nTASK ASSIGNMENT SYSTEM\nBackend Team\n\nNode.js \u00B7 PostgreSQL \u00B7 Redis \u00B7 JWT\n\n\nBackend \u2014 Task Assignment System\n\n\nOverview\nThe backend team builds and maintains the server-side logic, database architectur...",
+    "Category": "Backend",
+    "RequiredSkills": [
+      "fastapi",
+      "database",
+      "backend",
+      "python",
+      "graphql",
+      "express"
+    ],
+    "AssignedDeveloperId": "4d116448b89e4a97bf4e2345",
+    "AssignedDeveloperName": "Evan Wright",
+    "Status": "Assigned",
+    "CreatedAt": "2026-06-26T16:40:40.9109583Z"
   }
 ]
